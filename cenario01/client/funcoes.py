@@ -5,15 +5,17 @@ Cada função possui uma breve descrição de sua funcionalidade e complexidade.
 Autor: Sérgio Mendes
 '''
 import random
-import os
 import threading
+import requests
 
-def gerarDados(qntEventos=10):
+def gerarDados(qntEventos=10, server_url="http://localhost:8000/eventos/"):
     '''
-    Função que gera ruídos aleatórios para os eventos com Threads.
+    Função que gera ruídos aleatórios para os eventos com Threads e envia para o servidor.
 
-    :param qtd_eventos: quantidade de eventos que serão gerados. Por padrão são gerados 10 eventos.
-    :type qtd_eventos: int
+    :param qntEventos: quantidade de eventos que serão gerados. Por padrão são gerados 10 eventos.
+    :type qntEventos: int
+    :param server_url: URL do servidor para onde os eventos serão enviados.
+    :type server_url: str
 
     :complexidade: O(n), onde n é a quantidade de eventos que serão gerados. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
     Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
@@ -23,11 +25,7 @@ def gerarDados(qntEventos=10):
     def gerar_ruido(evento_id, buffer, lock):
         ruido = round(random.uniform(40.0, 140.0), 1)
         with lock:
-            buffer.append(f'EVENTO {evento_id}: {ruido} \n')
-
-    # Se o arquivo já existir, ele será removido e um novo arquivo será criado.
-    if os.path.exists('cenario01/client/eventos.txt'):
-        os.remove('cenario01/client/eventos.txt')
+            buffer.append({"id": evento_id, "ruido": ruido})
 
     # Lista de threads
     threads = []
@@ -44,9 +42,12 @@ def gerarDados(qntEventos=10):
     for thread in threads:
         thread.join()
 
-    # Escrever todos os dados do buffer no arquivo
-    with open('cenario01/client/eventos.txt', 'w') as arquivo:
-        arquivo.writelines(buffer)
+    # Enviar todos os dados do buffer para o servidor
+    response = requests.post(server_url, json=buffer)
+    if response.status_code == 200:
+        print("Eventos enviados com sucesso!")
+    else:
+        print(f"Erro ao enviar eventos: {response.status_code}")
 
 def listaEventos():
     '''
