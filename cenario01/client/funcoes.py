@@ -6,11 +6,11 @@ Autor: Sérgio Mendes
 '''
 import random
 import os
-
+import threading
 
 def gerarDados(qntEventos=10):
     '''
-    Função que gera ruídos aleatórios para os eventos.
+    Função que gera ruídos aleatórios para os eventos com Threads.
 
     :param qtd_eventos: quantidade de eventos que serão gerados. Por padrão são gerados 10 eventos.
     :type qtd_eventos: int
@@ -19,23 +19,34 @@ def gerarDados(qntEventos=10):
     Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
     '''
 
+    # Função para gerar ruído de um evento e adicionar ao buffer central
+    def gerar_ruido(evento_id, buffer, lock):
+        ruido = round(random.uniform(40.0, 140.0), 1)
+        with lock:
+            buffer.append(f'EVENTO {evento_id}: {ruido} \n')
+
     # Se o arquivo já existir, ele será removido e um novo arquivo será criado.
-    if os.path.exists('eventos.txt'):
-        os.remove('eventos.txt')
+    if os.path.exists('cenario01/client/eventos.txt'):
+        os.remove('cenario01/client/eventos.txt')
 
-    # Cria uma lista de dicionários com os dados dos eventos
-    eventos = []
-    for i in range(0, qntEventos):
-        evento = {'id': i + 1,
-                      'ruido': round(random.uniform(40.0, 140.0), 1)}
-        eventos.append(evento)
+    # Lista de threads
+    threads = []
+    lock = threading.Lock()
+    buffer = []
 
-    # Cria um arquivo e escreve os dados dos eventos
-    with open('eventos.txt', 'w') as arquivo:
-        for evento in eventos:
-            arquivo.write(
-                f'EVENTO {evento["id"]}: {evento["ruido"]} \n')
+    # Criar e iniciar uma thread para cada evento
+    for i in range(1, qntEventos + 1):
+        thread = threading.Thread(target=gerar_ruido, args=(i, buffer, lock))
+        threads.append(thread)
+        thread.start()
 
+    # Aguardar todas as threads terminarem
+    for thread in threads:
+        thread.join()
+
+    # Escrever todos os dados do buffer no arquivo
+    with open('cenario01/client/eventos.txt', 'w') as arquivo:
+        arquivo.writelines(buffer)
 
 def listaEventos():
     '''
