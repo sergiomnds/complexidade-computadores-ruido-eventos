@@ -27,7 +27,10 @@ try:
             continue
 
         if opcao == 1:
-            gerarDados()
+            # Exemplo de uso
+            eventos = gerarDados(10)
+            trios = processarDados(eventos, 90.0)
+            enviarDados(trios)
             print("Dados gerados com sucesso! \n")
         elif opcao == 2:
             listaEventos()

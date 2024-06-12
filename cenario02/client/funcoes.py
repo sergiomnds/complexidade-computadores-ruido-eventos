@@ -5,36 +5,90 @@ Cada função possui uma breve descrição de sua funcionalidade e complexidade.
 Autor: Sérgio Mendes
 '''
 import random
-import os
+import threading
+import requests
 
+import os
+import random
+import threading
+import requests
 
 def gerarDados(qntEventos=10):
     '''
-    Função que gera ruídos aleatórios para os eventos.
+    Função que gera ruídos aleatórios para os eventos de forma paralelizada.
 
-    :param qtd_eventos: quantidade de eventos que serão gerados. Por padrão são gerados 10 eventos.
-    :type qtd_eventos: int
+    :param qntEventos: quantidade de eventos que serão gerados. Por padrão são gerados 10 eventos.
+    :type qntEventos: int
 
     :complexidade: O(n), onde n é a quantidade de eventos que serão gerados. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
     Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
     '''
 
-    # Se o arquivo já existir, ele será removido e um novo arquivo será criado.
-    if os.path.exists('eventos.txt'):
-        os.remove('eventos.txt')
+    # Função para gerar ruído de um evento e adicionar ao buffer central
+    def gerar_ruido(evento_id, buffer, lock):
+        ruido = round(random.uniform(40.0, 140.0), 1)
+        with lock:
+            buffer.append({"id": evento_id, "ruido": ruido})
 
-    # Cria uma lista de dicionários com os dados dos eventos
-    eventos = []
-    for i in range(0, qntEventos):
-        evento = {'id': i + 1,
-                      'ruido': round(random.uniform(40.0, 140.0), 1)}
-        eventos.append(evento)
+    # Lista de threads
+    threads = []
+    lock = threading.Lock()
+    buffer = []
 
-    # Cria um arquivo e escreve os dados dos eventos
-    with open('eventos.txt', 'w') as arquivo:
-        for evento in eventos:
-            arquivo.write(
-                f'EVENTO {evento["id"]}: {evento["ruido"]} \n')
+    # Criar e iniciar uma thread para cada evento
+    for i in range(1, qntEventos + 1):
+        thread = threading.Thread(target=gerar_ruido, args=(i, buffer, lock))
+        threads.append(thread)
+        thread.start()
+
+    # Aguardar todas as threads terminarem
+    for thread in threads:
+        thread.join()
+
+    return buffer
+
+def processarDados(eventos, limiteRuido=90.0):
+    '''
+    Função que encontra todos os possíveis trios de eventos com ruído acima do limite especificado (90 dB).
+
+    :param eventos: lista de eventos gerados.
+    :type eventos: list
+    :param limiteRuido: ruído limite para a busca dos trios. Por padrão é 90 dB.
+    :type limiteRuido: float
+
+    :complexidade: O(n³), onde n é a quantidade de eventos a serem ordenados. São três loops aninhados que percorrem a lista de eventos.
+    '''
+
+    def trioRuido(eventos, limiteRuido=90.0):
+        encontrados = []
+        n = len(eventos)
+        for i in range(n):
+            for j in range(i+1, n):
+                for k in range(j+1, n):
+                    if eventos[i]["ruido"] > limiteRuido and eventos[j]["ruido"] > limiteRuido and eventos[k]["ruido"] > limiteRuido:
+                        encontrados.append(
+                            (eventos[i]["id"], eventos[j]["id"], eventos[k]["id"]))
+        return encontrados
+
+    trios = trioRuido(eventos, limiteRuido)
+    return trios
+
+def enviarDados(trios, server_url="http://localhost:8000/trios/"):
+    '''
+    Função que envia os trios de eventos processados para o servidor.
+
+    :param trios: lista de trios de eventos processados.
+    :type trios: list
+    :param server_url: URL do servidor para onde os trios serão enviados.
+    :type server_url: str
+    '''
+
+    # Enviar todos os trios processados para o servidor
+    response = requests.post(server_url, json=[{"eventos": trio} for trio in trios])
+    if response.status_code == 200:
+        print("Trios enviados com sucesso!")
+    else:
+        print(f"Erro ao enviar trios: {response.status_code}")
 
 
 def listaEventos():
