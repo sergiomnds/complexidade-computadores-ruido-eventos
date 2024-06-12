@@ -11,6 +11,7 @@ trios_acumulados = []
 
 @app.post("/trios/")
 def receber_trios(trios: List[Trio]):
+    trios_acumulados.clear()
     trios_acumulados.extend(trios)
     return {"message": "Trios recebidos com sucesso!"}
 
