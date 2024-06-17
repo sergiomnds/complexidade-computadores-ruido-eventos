@@ -14,12 +14,11 @@ print('O total de 10 Eventos já foram gerados com sucesso! Se desejar gerar NOV
 try:
     while True:
         print("Escolha uma opção:")
-        print("1 - Gerar dados aleatórios")
+        print("1 - Gerar e enviar dados aleatórios para processamento no servidor")
         print("2 - Imprimir lista de eventos monitorados")
         print("3 - Imprimir as leituras por evento monitorado")
         print("4 - Ordenar os dados em ordem crescente")
-        print("5 - Imprimir trio de eventos com ruído perigoso (acima de 90 dB)")
-        print("6 - Sair")
+        print("5 - Sair")
         try:
             opcao = int(input("Opção escolhida: "))
         except ValueError:
@@ -36,8 +35,6 @@ try:
         elif opcao == 4:
             dadosCrescente()
         elif opcao == 5:
-            trioRuido()
-        elif opcao == 6:
             print('\nObrigado por utilizar o Sistema de Monitoramento de Ruído de Eventos!!')
             break
         else:
