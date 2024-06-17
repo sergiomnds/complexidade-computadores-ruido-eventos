@@ -7,7 +7,9 @@ Autor: Sérgio Mendes
 '''
 from funcoes import *
 
-gerarDados()
+dados = gerarDados()
+trios = processarDados(dados, 90.0)
+enviarDados(trios)
 print('Bem vindo ao Sistema de Monitoramento de Ruído de Eventos!!')
 print('O total de 10 Eventos já foram gerados com sucesso! Se desejar gerar NOVOS dados, escolha a opção 1 no menu. \n')
 
@@ -28,7 +30,7 @@ try:
 
         if opcao == 1:
             # Exemplo de uso
-            eventos = gerarDados(10)
+            eventos = gerarDados()
             trios = processarDados(eventos, 90.0)
             enviarDados(trios)
             print("Dados gerados com sucesso! \n")
