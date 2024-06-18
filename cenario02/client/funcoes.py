@@ -110,7 +110,7 @@ def listaEventos():
     linhas = []
 
     # Lê o arquivo e adiciona os dados à lista de linhas
-    with open('eventos.txt', 'r') as arquivo:
+    with open('cenario02/client/eventos.txt', 'r') as arquivo:
         for linha in arquivo:
             evento = linha.split(":")[0].strip()
             linhas.append([evento])
@@ -135,7 +135,7 @@ def listaLeitura():
 
     # Cria uma lista de dados e adiciona os dados do arquivo à lista
     dados = []
-    with open('eventos.txt', 'r') as arquivo:
+    with open('cenario02/client/eventos.txt', 'r') as arquivo:
         for linha in arquivo:
             evento, ruido = linha.strip().split(': ')
             dados.append((evento, ruido))
@@ -161,7 +161,7 @@ def dadosCrescente():
     '''
 
     # Lê os dados do arquivo e os adiciona à lista
-    with open('eventos.txt', 'r') as arquivo:
+    with open('cenario02/client/eventos.txt', 'r') as arquivo:
         eventos = []
         for linha in arquivo:
             evento, ruido = linha.strip().split(': ')
