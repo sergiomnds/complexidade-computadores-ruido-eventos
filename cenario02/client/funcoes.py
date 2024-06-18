@@ -4,6 +4,7 @@ Cada função possui uma breve descrição de sua funcionalidade e complexidade.
 
 Autor: Sérgio Mendes
 '''
+import os
 import random
 import threading
 import requests
@@ -39,6 +40,15 @@ def gerarDados(qntEventos=10):
     # Aguardar todas as threads terminarem
     for thread in threads:
         thread.join()
+        
+    # Se o arquivo já existir, ele será removido e um novo arquivo será criado.
+    if os.path.exists('cenario02/client/eventos.txt'):
+        os.remove('cenario02/client/eventos.txt')
+
+    # Cria um arquivo e escreve os dados dos eventos
+    with open('cenario02/client/eventos.txt', 'w') as arquivo:
+        for evento in buffer:
+            arquivo.write(f'EVENTO {evento["id"]}: {evento["ruido"]} \n')
 
     return buffer
 

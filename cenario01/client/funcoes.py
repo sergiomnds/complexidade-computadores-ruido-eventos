@@ -4,6 +4,7 @@ Cada função possui uma breve descrição de sua funcionalidade e complexidade.
 
 Autor: Sérgio Mendes
 '''
+import os
 import random
 import threading
 import requests
@@ -43,11 +44,11 @@ def gerarDados(qntEventos=10, server_url="http://localhost:8000/eventos/"):
         thread.join()
 
     # Se o arquivo já existir, ele será removido e um novo arquivo será criado.
-    if os.path.exists('eventos.txt'):
-        os.remove('eventos.txt')
+    if os.path.exists('cenario01/client/eventos.txt'):
+        os.remove('cenario01/client/eventos.txt')
 
     # Cria um arquivo e escreve os dados dos eventos
-    with open('eventos.txt', 'w') as arquivo:
+    with open('cenario01/client/eventos.txt', 'w') as arquivo:
         for evento in buffer:
             arquivo.write(f'EVENTO {evento["id"]}: {evento["ruido"]} \n')
 
@@ -72,7 +73,7 @@ def listaEventos():
     linhas = []
 
     # Lê o arquivo e adiciona os dados à lista de linhas
-    with open('eventos.txt', 'r') as arquivo:
+    with open('cenario01/client/eventos.txt', 'r') as arquivo:
         for linha in arquivo:
             evento = linha.split(":")[0].strip()
             linhas.append([evento])
@@ -97,7 +98,7 @@ def listaLeitura():
 
     # Cria uma lista de dados e adiciona os dados do arquivo à lista
     dados = []
-    with open('eventos.txt', 'r') as arquivo:
+    with open('cenario01/client/eventos.txt', 'r') as arquivo:
         for linha in arquivo:
             evento, ruido = linha.strip().split(': ')
             dados.append((evento, ruido))
@@ -123,7 +124,7 @@ def dadosCrescente():
     '''
 
     # Lê os dados do arquivo e os adiciona à lista
-    with open('eventos.txt', 'r') as arquivo:
+    with open('cenario01/client/eventos.txt', 'r') as arquivo:
         eventos = []
         for linha in arquivo:
             evento, ruido = linha.strip().split(': ')
