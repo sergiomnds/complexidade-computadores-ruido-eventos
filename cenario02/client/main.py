@@ -41,8 +41,6 @@ try:
         elif opcao == 4:
             dadosCrescente()
         elif opcao == 5:
-            trioRuido()
-        elif opcao == 6:
             print('\nObrigado por utilizar o Sistema de Monitoramento de Ruído de Eventos!!')
             break
         else:
