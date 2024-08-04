@@ -8,8 +8,6 @@ import base64
 
 app = FastAPI()
 
-# Definição de um modelo de dados para o trio de eventos
-
 
 class Trio(BaseModel):
     eventos: str
@@ -19,11 +17,10 @@ class Trio(BaseModel):
 with open("chave_privada.pem", "rb") as chave_privada_file:
     chave_privada = serialization.load_pem_private_key(
         chave_privada_file.read(),
-        password=None,  # Coloque a senha, se houver
+        password=None,
         backend=default_backend()
     )
 
-# Lista para armazenar os trios recebidos
 trios_armazena = []
 
 

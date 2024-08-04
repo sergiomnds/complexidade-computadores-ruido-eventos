@@ -1,2 +1,6 @@
 fastapi
 pydantic
+cryptography
+requests
+opencv-python
+numpy

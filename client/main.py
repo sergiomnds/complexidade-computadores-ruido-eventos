@@ -6,9 +6,7 @@ Utiliza as funções importadas do arquivo funcoes.py.
 Autor: Sérgio Mendes
 '''
 from funcoes import dadosCrescente, listaLeitura, listaEventos
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.backends import default_backend
-from encriptador import Encriptador, gerarDados, processarDados, enviarDados
+from encriptador import gerarDados, processarDados, enviarDados
 
 dados = gerarDados()
 trios = processarDados(dados, 90.0)
