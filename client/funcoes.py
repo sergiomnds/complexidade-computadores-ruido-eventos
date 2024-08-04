@@ -4,60 +4,7 @@ Cada função possui uma breve descrição de sua funcionalidade e complexidade.
 
 Autor: Sérgio Mendes
 '''
-import os
-import random
-import threading
-import requests
 
-def gerarDados(qntEventos=10, server_url="http://localhost:8000/eventos/"):
-    '''
-    Função que gera ruídos aleatórios para os eventos com Threads, envia para o servidor e salva em um arquivo.
-
-    :param qntEventos: quantidade de eventos que serão gerados. Por padrão são gerados 10 eventos.
-    :type qntEventos: int
-    :param server_url: URL do servidor para onde os eventos serão enviados.
-    :type server_url: str
-
-    :complexidade: O(n), onde n é a quantidade de eventos que serão gerados. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
-    Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
-    '''
-
-    # Função para gerar ruído de um evento e adicionar ao buffer central
-    def gerar_ruido(evento_id, buffer, lock):
-        ruido = round(random.uniform(40.0, 140.0), 1)
-        with lock:
-            buffer.append({"id": evento_id, "ruido": ruido})
-
-    # Lista de threads
-    threads = []
-    lock = threading.Lock()
-    buffer = []
-
-    # Criar e iniciar uma thread para cada evento
-    for i in range(1, qntEventos + 1):
-        thread = threading.Thread(target=gerar_ruido, args=(i, buffer, lock))
-        threads.append(thread)
-        thread.start()
-
-    # Aguardar todas as threads terminarem
-    for thread in threads:
-        thread.join()
-
-    # Se o arquivo já existir, ele será removido e um novo arquivo será criado.
-    if os.path.exists('cenario01/client/eventos.txt'):
-        os.remove('cenario01/client/eventos.txt')
-
-    # Cria um arquivo e escreve os dados dos eventos
-    with open('cenario01/client/eventos.txt', 'w') as arquivo:
-        for evento in buffer:
-            arquivo.write(f'EVENTO {evento["id"]}: {evento["ruido"]} \n')
-
-    # Enviar todos os dados do buffer para o servidor
-    response = requests.post(server_url, json=buffer)
-    if response.status_code == 200:
-        print("Eventos enviados com sucesso!")
-    else:
-        print(f"Erro ao enviar eventos: {response.status_code}")
 
 def listaEventos():
     '''
@@ -73,7 +20,7 @@ def listaEventos():
     linhas = []
 
     # Lê o arquivo e adiciona os dados à lista de linhas
-    with open('cenario01/client/eventos.txt', 'r') as arquivo:
+    with open('client/eventos.txt', 'r') as arquivo:
         for linha in arquivo:
             evento = linha.split(":")[0].strip()
             linhas.append([evento])
@@ -98,7 +45,7 @@ def listaLeitura():
 
     # Cria uma lista de dados e adiciona os dados do arquivo à lista
     dados = []
-    with open('cenario01/client/eventos.txt', 'r') as arquivo:
+    with open('client/eventos.txt', 'r') as arquivo:
         for linha in arquivo:
             evento, ruido = linha.strip().split(': ')
             dados.append((evento, ruido))
@@ -124,7 +71,7 @@ def dadosCrescente():
     '''
 
     # Lê os dados do arquivo e os adiciona à lista
-    with open('cenario01/client/eventos.txt', 'r') as arquivo:
+    with open('client/eventos.txt', 'r') as arquivo:
         eventos = []
         for linha in arquivo:
             evento, ruido = linha.strip().split(': ')
@@ -137,7 +84,7 @@ def dadosCrescente():
         for j in range(0, n-i-1):
             if eventos[j][1] > eventos[j+1][1]:
                 eventos[j], eventos[j +
-                                              1] = eventos[j+1], eventos[j]
+                                    1] = eventos[j+1], eventos[j]
 
     # Imprime a tabela ordenada
     print('Ruídos dos eventos em ordem crescente: ')

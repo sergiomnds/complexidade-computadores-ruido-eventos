@@ -5,16 +5,21 @@ Utiliza as funções importadas do arquivo funcoes.py.
 
 Autor: Sérgio Mendes
 '''
-from funcoes import *
+from funcoes import dadosCrescente, listaLeitura, listaEventos
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
+from encriptador import Encriptador, gerarDados, processarDados, enviarDados
 
-gerarDados()
+dados = gerarDados()
+trios = processarDados(dados, 90.0)
+enviarDados(trios)
 print('Bem vindo ao Sistema de Monitoramento de Ruído de Eventos!!')
 print('O total de 10 Eventos já foram gerados com sucesso! Se desejar gerar NOVOS dados, escolha a opção 1 no menu. \n')
 
 try:
     while True:
         print("Escolha uma opção:")
-        print("1 - Gerar e enviar dados aleatórios para processamento no servidor")
+        print("1 - Gerar dados aleatórios")
         print("2 - Imprimir lista de eventos monitorados")
         print("3 - Imprimir as leituras por evento monitorado")
         print("4 - Ordenar os dados em ordem crescente")
@@ -26,7 +31,9 @@ try:
             continue
 
         if opcao == 1:
-            gerarDados()
+            dados = gerarDados()
+            trios = processarDados(dados, 90.0)
+            enviarDados(trios)
             print("Dados gerados com sucesso! \n")
         elif opcao == 2:
             listaEventos()
@@ -35,7 +42,8 @@ try:
         elif opcao == 4:
             dadosCrescente()
         elif opcao == 5:
-            print('\nObrigado por utilizar o Sistema de Monitoramento de Ruído de Eventos!!')
+            print(
+                '\nObrigado por utilizar o Sistema de Monitoramento de Ruído de Eventos!!')
             break
         else:
             print("Opção inválida. Tente novamente. \n")
